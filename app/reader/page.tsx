@@ -10,7 +10,7 @@ import { createClient } from '@supabase/supabase-js';
 // CONFIGURAÇÃO SUPABASE (Real)
 // ==========================================
 const SUPABASE_URL = 'https://gelrtnknowueuzsrjphe.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_3kx4l5U4v2y8vqbsPNTJXg_pVcoIpGS';
+const SUPABASE_ANON_KEY = 'sb_publishable_3kx415U4v2y8vqbsPNTJXg_pVcoIpGS';
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function ReaderScreen() {
@@ -25,26 +25,14 @@ export default function ReaderScreen() {
   const [chaptersList, setChaptersList] = useState<any[]>([]);
   const [currentChapter, setCurrentChapter] = useState<any>(null);
 
-  // --- SIMULAÇÃO DO FETCH DO SUPABASE ---
+  // --- FETCH DO SUPABASE ---
   useEffect(() => {
     const fetchBookData = async () => {
       setLoading(true);
-      
       try {
-        // 1. LÓGICA DE ACESSO (Simulando tabela user_access)
-        // Mude para 'false' para testar a tela de bloqueio
         const userHasPaid = true; 
+        setHasAccess(userHasPaid);
 
-        if (!userHasPaid) {
-          setHasAccess(false);
-          setLoading(false);
-          return;
-        }
-
-        setHasAccess(true);
-
-        // 2. BUSCA DE CAPÍTULOS (Real no Supabase)
-        // Busca completa sem limites, ordenada pela coluna 'ordem'
         const { data: fetchedChapters, error } = await supabase
           .from('capitulos')
           .select('*')
@@ -54,7 +42,6 @@ export default function ReaderScreen() {
 
         if (fetchedChapters && fetchedChapters.length > 0) {
           setChaptersList(fetchedChapters);
-          // Define o primeiro capítulo como ativo por padrão
           setCurrentChapter(fetchedChapters[0]);
         }
       } catch (error) {
@@ -73,16 +60,12 @@ export default function ReaderScreen() {
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
   const toggleIndex = () => setIsIndexOpen(!isIndexOpen);
 
-  // --- NAVEGAÇÃO DO ÍNDICE ---
   const handleChapterSelect = (chapter: any) => {
     setCurrentChapter(chapter);
-    setIsIndexOpen(false); // Fecha a gaveta ao selecionar
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // Volta pro topo
+    setIsIndexOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // ==========================================
-  // RENDERIZAÇÃO: TELA DE CARREGAMENTO
-  // ==========================================
   if (loading) {
     return (
       <div className="min-h-screen bg-purple-950 flex flex-col items-center justify-center text-white">
@@ -92,9 +75,6 @@ export default function ReaderScreen() {
     );
   }
 
-  // ==========================================
-  // RENDERIZAÇÃO: CONTEÚDO BLOQUEADO
-  // ==========================================
   if (!hasAccess) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-center">
@@ -103,200 +83,90 @@ export default function ReaderScreen() {
             <Lock size={40} />
           </div>
           <h2 className="text-2xl font-bold text-gray-800 mb-3">Conteúdo Bloqueado</h2>
-          <p className="text-gray-500 mb-8 leading-relaxed">
-            Você precisa adquirir este e-book para ter acesso aos capítulos completos.
-          </p>
-          <button className="w-full bg-yellow-500 hover:bg-yellow-400 text-purple-950 font-bold py-4 rounded-xl transition-colors shadow-lg shadow-yellow-500/30">
-            Comprar Agora
-          </button>
+          <p className="text-gray-500 mb-8 leading-relaxed">Você precisa adquirir este e-book para ter acesso completo.</p>
+          <button className="w-full bg-yellow-500 text-purple-950 font-bold py-4 rounded-xl shadow-lg">Comprar Agora</button>
         </div>
       </div>
     );
   }
 
-  // ==========================================
-  // RENDERIZAÇÃO: TELA DE LEITURA (READER)
-  // ==========================================
   return (
-    <div className={`min-h-screen pb-28 transition-colors duration-500 ${isDarkMode ? 'bg-gray-950 text-gray-300' : 'bg-white text-gray-800'}`}>
+    <div className={`min-h-screen pb-28 transition-colors duration-500 ${isDarkMode ? 'bg-gray-950 text-gray-300' : 'bg-[#F9F7F2] text-gray-800'}`}>
       
-      {/* OVERLAY DO ÍNDICE */}
-      {isIndexOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 z-[60] backdrop-blur-sm transition-opacity"
-          onClick={toggleIndex}
-        />
-      )}
-
-      {/* GAVETA DO ÍNDICE (SIDEBAR) */}
-      <div className={`fixed inset-y-0 right-0 w-80 max-w-[85vw] bg-purple-950 shadow-2xl z-[70] transform transition-transform duration-300 ease-in-out flex flex-col ${isIndexOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        
-        <div className="p-6 border-b border-purple-800/50 flex items-center justify-between bg-purple-950 sticky top-0 z-10">
-          <div>
-            <div className="flex items-center gap-1 mb-1">
-              <span className="text-xl font-black tracking-tighter text-white">S</span>
-              <span className="text-xl font-black tracking-tighter text-yellow-500">+</span>
-            </div>
-            <h2 className="text-yellow-500 font-medium text-xs tracking-[0.2em] uppercase">
-              Conteúdo do E-book
-            </h2>
-          </div>
-          <button onClick={toggleIndex} className="text-purple-300 hover:text-white p-2 rounded-full hover:bg-purple-800/50 transition-colors">
-            <X size={20} />
-          </button>
+      {/* OVERLAY E GAVETA DO ÍNDICE */}
+      {isIndexOpen && <div className="fixed inset-0 bg-black/60 z-[60] backdrop-blur-sm" onClick={toggleIndex} />}
+      <div className={`fixed inset-y-0 right-0 w-80 max-w-[85vw] bg-purple-950 shadow-2xl z-[70] transform transition-transform duration-300 ${isIndexOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`}>
+        <div className="p-6 border-b border-purple-800/50 flex items-center justify-between">
+          <h2 className="text-yellow-500 font-medium text-xs tracking-[0.2em] uppercase">Índice</h2>
+          <button onClick={toggleIndex} className="text-purple-300"><X size={20} /></button>
         </div>
-
-        <div className="flex-1 overflow-y-auto py-4 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto py-4">
           <ul className="space-y-1">
-            {chaptersList.map((chapter) => {
-              const isCurrent = currentChapter?.id === chapter.id;
-              
-              return (
-                <li key={chapter.id} className="relative">
-                  {isCurrent && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-500 rounded-r-full shadow-[0_0_8px_rgba(234,179,8,0.6)]" />
-                  )}
-                  
-                  <button 
-                    onClick={() => handleChapterSelect(chapter)}
-                    className={`w-full text-left px-6 py-4 flex items-center justify-between group transition-all duration-200
-                      ${isCurrent ? 'bg-purple-900/40' : 'hover:bg-purple-900/20'}
-                    `}
-                  >
-                    <div className="flex flex-col gap-1 pr-4">
-                      <span className={`text-sm md:text-base font-medium transition-colors
-                        ${isCurrent ? 'text-yellow-500' : 'text-purple-100'}
-                      `}>
-                        {chapter.titulo_capitulo}
-                      </span>
-                      
-                      {isCurrent && (
-                        <span className="text-[10px] uppercase tracking-wider text-yellow-500/80 font-bold">
-                          Você está aqui
-                        </span>
-                      )}
-                    </div>
-                    
-                    <div className="flex-shrink-0">
-                      {isCurrent ? (
-                        <Clock size={18} className="text-yellow-500" />
-                      ) : (
-                        <CheckCircle size={18} className="text-yellow-500/80" />
-                      )}
-                    </div>
-                  </button>
-                </li>
-              );
-            })}
+            {chaptersList.map((chapter) => (
+              <li key={chapter.id}>
+                <button onClick={() => handleChapterSelect(chapter)} className={`w-full text-left px-6 py-4 flex items-center justify-between ${currentChapter?.id === chapter.id ? 'bg-purple-900/40 text-yellow-500' : 'text-purple-100'}`}>
+                  <span className="text-sm font-medium">{chapter.titulo_capitulo}</span>
+                  {currentChapter?.id === chapter.id ? <Clock size={16} /> : <CheckCircle size={16} className="opacity-50" />}
+                </button>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
 
       {/* CABEÇALHO */}
-      <header className="sticky top-0 z-50 bg-gradient-to-r from-purple-950 via-purple-900 to-purple-950 text-white px-4 py-4 flex items-center justify-between shadow-md">
-        <Link href="/" className="p-2 hover:bg-white/10 rounded-full transition-colors" aria-label="Voltar">
-          <ArrowLeft size={24} className="text-white" />
-        </Link>
-        <h1 className="text-base font-medium tracking-[0.2em] uppercase text-white/90">
-          Tempo a Dois
-        </h1>
-        <button 
-          onClick={toggleIndex}
-          className="p-2 hover:bg-white/10 rounded-full transition-colors" 
-          aria-label="Índice"
-        >
-          <List size={24} className="text-white" />
-        </button>
+      <header className={`sticky top-0 z-50 px-4 py-4 flex items-center justify-between shadow-md ${isDarkMode ? 'bg-gray-900 border-b border-gray-800' : 'bg-purple-950 text-white'}`}>
+        <Link href="/" className="p-2 hover:bg-white/10 rounded-full"><ArrowLeft size={24} /></Link>
+        <h1 className="text-xs font-medium tracking-[0.2em] uppercase opacity-80">Tempo a Dois</h1>
+        <button onClick={toggleIndex} className="p-2 hover:bg-white/10 rounded-full"><List size={24} /></button>
       </header>
 
-      {/* ÁREA DE LEITURA */}
+      {/* ÁREA DE LEITURA DIAGRAMADA */}
       {currentChapter && (
-        <main className="px-6 py-10 max-w-2xl mx-auto animate-in fade-in duration-500">
-          
-          {/* Imagem do Capítulo (Antes do título, usando <img>) */}
+        <main className="px-8 py-10 max-w-2xl mx-auto animate-in fade-in duration-500">
+          {/* Imagem do Capítulo */}
           {currentChapter.url_imagem && (
-            <div className="relative w-full h-64 md:h-80 rounded-2xl overflow-hidden shadow-xl mb-8">
-              <img 
-                src={currentChapter.url_imagem} 
-                alt={currentChapter.titulo_capitulo || 'Capa do Capítulo'} 
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+            <div className="relative w-full h-64 md:h-80 rounded-3xl overflow-hidden shadow-xl mb-12">
+              <img src={currentChapter.url_imagem} alt="Capa" className="w-full h-full object-cover" />
             </div>
           )}
 
           {/* Título e Subtítulo */}
-          <h2 className={`text-3xl md:text-4xl font-bold mb-2 leading-tight tracking-tight ${isDarkMode ? 'text-gray-100' : 'text-purple-950'}`}>
+          <h2 className={`text-3xl md:text-4xl font-serif font-bold mb-4 text-center leading-tight ${isDarkMode ? 'text-gray-100' : 'text-purple-950'}`}>
             {currentChapter.titulo_capitulo}
           </h2>
           {currentChapter.subtitulo && (
-            <h3 className={`text-xl mb-4 font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-              {currentChapter.subtitulo}
-            </h3>
+            <h3 className={`text-lg mb-8 text-center font-medium opacity-70`}>{currentChapter.subtitulo}</h3>
           )}
 
-          {/* Versículo Base (Abaixo do título) */}
+          {/* Versículo e Frase */}
           {currentChapter.versiculo_base && (
-            <div className={`mb-10 italic ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} text-lg md:text-xl font-serif text-center md:text-left`}>
-              <p className="leading-relaxed">
-                "{currentChapter.versiculo_base.split('—')[0].trim()}"
-              </p>
-              {currentChapter.versiculo_base.includes('—') && (
-                <p className="text-sm mt-2 font-semibold tracking-widest uppercase opacity-80">
-                  — {currentChapter.versiculo_base.split('—')[1].trim()}
-                </p>
-              )}
+            <div className="mb-10 text-center italic opacity-70 font-serif text-lg leading-relaxed px-4">
+              "{currentChapter.versiculo_base}"
             </div>
           )}
 
-          {/* Frase de Destaque */}
-          {currentChapter.frase_destaque && (
-            <div className="flex gap-4 mb-10 items-start">
-              <Quote className="text-amber-500 flex-shrink-0 rotate-180 opacity-80" size={36} />
-              <div className="pt-2">
-                <p className={`text-xl md:text-2xl italic font-medium leading-relaxed mb-3 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
-                  "{currentChapter.frase_destaque.split('—')[0].trim()}"
-                </p>
-                {currentChapter.frase_destaque.includes('—') && (
-                  <p className={`text-sm font-semibold tracking-wide uppercase ${isDarkMode ? 'text-amber-400' : 'text-amber-600'}`}>
-                    — {currentChapter.frase_destaque.split('—')[1].trim()}
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Texto Principal */}
+          {/* ARTIGO COM JUSTIFICAÇÃO E RESPIRO */}
           <article 
-            className="space-y-8 font-sans transition-all duration-300 text-center md:text-left"
-            style={{ 
-              fontSize: `${fontSize}px`,
-              lineHeight: '1.8'
-            }}
+            className="text-justify leading-relaxed" 
+            style={{ fontSize: `${fontSize}px`, hyphens: 'auto', WebkitHyphens: 'auto' }}
           >
-            {/* Divide o texto por quebras de linha para renderizar parágrafos. Usa a coluna 'conteudo' */}
-            {(currentChapter.conteudo || '').split('\n\n').map((paragraph: string, index: number) => (
-              <p key={index}>{paragraph}</p>
+            {(currentChapter.conteudo || '').split('\n').map((paragraph: string, index: number) => (
+              paragraph.trim() !== "" && (
+                <p key={index} className="mb-8">{paragraph.trim()}</p>
+              )
             ))}
           </article>
         </main>
       )}
 
       {/* CONTROLES INFERIORES */}
-      <div className={`fixed bottom-0 left-0 right-0 border-t flex items-center justify-center gap-16 py-4 px-6 transition-colors duration-500 backdrop-blur-lg z-40 ${isDarkMode ? 'bg-gray-950/90 border-gray-800' : 'bg-white/90 border-gray-100 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]'}`}>
-        
-        <button onClick={decreaseFont} className={`p-3 rounded-full transition-all ${isDarkMode ? 'hover:bg-gray-800 text-gray-400' : 'hover:bg-gray-100 text-gray-500'}`}>
-          <div className="flex items-center gap-1"><Type size={18} /><span className="text-lg font-medium leading-none">-</span></div>
+      <div className={`fixed bottom-0 left-0 right-0 border-t flex items-center justify-center gap-12 py-4 px-6 backdrop-blur-lg z-40 ${isDarkMode ? 'bg-gray-950/90 border-gray-800' : 'bg-white/90 border-gray-100 shadow-[0_-10px_30px_rgba(0,0,0,0.05)]'}`}>
+        <button onClick={decreaseFont} className="p-2 opacity-60"><Type size={18} />-</button>
+        <button onClick={toggleDarkMode} className={`p-4 rounded-full shadow-lg ${isDarkMode ? 'bg-gray-800 text-amber-400' : 'bg-purple-100 text-purple-900'}`}>
+          {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
         </button>
-        
-        <button onClick={toggleDarkMode} className={`p-4 rounded-full transition-all duration-300 shadow-sm ${isDarkMode ? 'bg-gray-800 text-amber-400 hover:bg-gray-700 shadow-black/50' : 'bg-purple-50 text-purple-900 hover:bg-purple-100 shadow-purple-900/5'}`}>
-          {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
-        </button>
-
-        <button onClick={increaseFont} className={`p-3 rounded-full transition-all ${isDarkMode ? 'hover:bg-gray-800 text-gray-400' : 'hover:bg-gray-100 text-gray-500'}`}>
-          <div className="flex items-center gap-1"><Type size={22} /><span className="text-lg font-medium leading-none">+</span></div>
-        </button>
-
+        <button onClick={increaseFont} className="p-2 opacity-60"><Type size={22} />+</button>
       </div>
     </div>
   );
