@@ -1,109 +1,74 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, List, Moon, Sun, Type, Quote, X, CheckCircle, Clock, Lock, Smartphone } from 'lucide-react';
+import React from 'react';
+import { User, Search, Home } from 'lucide-react';
 import Link from 'next/link';
-import { createClient } from '@supabase/supabase-js';
 
-export const dynamic = 'force-dynamic';
-
-const SUPABASE_URL = 'https://gelrtnknowueuzsrjphe.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_3kx4l5U4v2y8vqbsPNTJXg_pVcoIpGS';
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-function InstallGuide() {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
-      if (isMobile && !isStandalone) setShow(true);
-    }
-  }, []);
-  if (!show) return null;
+export default function LibraryScreen() {
   return (
-    <div className="fixed bottom-28 left-4 right-4 z-[100] animate-in slide-in-from-bottom-10 duration-500">
-      <div className="bg-purple-900/98 backdrop-blur-md text-white p-5 rounded-2xl shadow-2xl border-2 border-yellow-500/50 flex items-center gap-4">
-        <div className="bg-yellow-500 p-2 rounded-xl text-purple-900 animate-pulse"><Smartphone size={24} /></div>
-        <div className="flex-1 text-left">
-          <p className="text-sm font-bold text-yellow-400">Instale o Aplicativo</p>
-          <p className="text-[11px] text-white leading-tight mt-1">Toque nos <span className="font-bold underline">3 pontinhos</span> e escolha <span className="font-bold underline">"Adicionar à tela de início"</span>.</p>
+    <div className="min-h-screen bg-[#2D0B5A] flex flex-col items-center">
+      {/* HEADER SUPERIOR */}
+      <div className="w-full max-w-md px-6 pt-12 pb-6 flex justify-between items-center">
+        <div className="bg-white p-2 rounded-2xl shadow-lg">
+          <span className="text-purple-900 font-black text-xl px-2">S+</span>
         </div>
-        <button onClick={() => setShow(false)} className="bg-white/10 p-2 rounded-full"><X size={20} /></button>
-      </div>
-    </div>
-  );
-}
-
-const renderWithBold = (text: string) => {
-  const parts = text.split(/(\*\*.*?\*\*)/g);
-  return parts.map((part, index) => (part.startsWith('**') && part.endsWith('**')) ? <strong key={index} className="font-bold">{part.slice(2, -2)}</strong> : part);
-};
-
-export default function ReaderScreen() {
-  const [fontSize, setFontSize] = useState(18);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isIndexOpen, setIsIndexOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [chaptersList, setChaptersList] = useState<any[]>([]);
-  const [currentChapter, setCurrentChapter] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchBookData = async () => {
-      setLoading(true);
-      try {
-        const { data: fetchedChapters, error } = await supabase.from('capitulos').select('*').order('ordem', { ascending: true });
-        if (fetchedChapters && fetchedChapters.length > 0) {
-          setChaptersList(fetchedChapters);
-          setCurrentChapter(fetchedChapters[0]);
-        }
-      } catch (e) { console.error(e); } finally { setLoading(false); }
-    };
-    fetchBookData();
-  }, []);
-
-  const toggleIndex = () => setIsIndexOpen(!isIndexOpen);
-
-  if (loading) return <div className="min-h-screen bg-purple-950 flex items-center justify-center text-white">Carregando...</div>;
-
-  return (
-    <div className={`min-h-screen pb-28 ${isDarkMode ? 'bg-gray-950 text-gray-300' : 'bg-white text-gray-800'}`}>
-      {isIndexOpen && <div className="fixed inset-0 bg-black/60 z-[60]" onClick={toggleIndex} />}
-      
-      <header className="sticky top-0 z-50 bg-purple-900 text-white px-4 py-4 flex items-center justify-between">
-        {/* SETA LIMPA PARA VOLTAR À TELA INICIAL */}
-        <Link href="/" className="p-2">
-          <ArrowLeft size={24} />
-        </Link>
-        <h1 className="text-xs font-bold tracking-widest uppercase">Tempo a Dois</h1>
-        <button onClick={toggleIndex} className="p-2"><List size={24} /></button>
-      </header>
-
-      {currentChapter && (
-        <main className="px-6 py-10 max-w-2xl mx-auto">
-          <h2 className="text-2xl font-bold mb-6">{currentChapter.titulo_capitulo}</h2>
-          <article className="space-y-6" style={{ fontSize: `${fontSize}px`, lineHeight: '1.8' }}>
-            {(currentChapter.conteudo || '').split('\n').map((p: string, i: number) => <p key={i}>{renderWithBold(p)}</p>)}
-          </article>
-        </main>
-      )}
-
-      {/* GAVETA DO ÍNDICE */}
-      <div className={`fixed inset-y-0 right-0 w-64 bg-purple-950 z-[70] transform transition-transform ${isIndexOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-         <div className="p-4 border-b border-white/10 flex justify-between text-white font-bold">MENU <X onClick={toggleIndex}/></div>
-         {chaptersList.map(ch => (
-           <button key={ch.id} onClick={() => {setCurrentChapter(ch); setIsIndexOpen(false);}} className="w-full text-left p-4 text-white border-b border-white/5 text-sm">
-             {ch.titulo_capitulo}
-           </button>
-         ))}
+        <button className="bg-white/10 p-3 rounded-full text-yellow-500">
+          <User size={24} />
+        </button>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 py-4 flex justify-center gap-10 bg-white/90 border-t z-40">
-        <button onClick={() => setFontSize(f => f - 2)}>- A</button>
-        <button onClick={() => setIsDarkMode(!isDarkMode)}>{isDarkMode ? <Sun /> : <Moon />}</button>
-        <button onClick={() => setFontSize(f => f + 2)}>+ A</button>
+      {/* BANNER PRINCIPAL */}
+      <div className="w-[90%] max-w-md relative rounded-[32px] overflow-hidden shadow-2xl mb-8 border border-white/10">
+        <img 
+          src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80" 
+          className="w-full h-56 object-cover brightness-75"
+          alt="Background"
+        />
+        <div className="absolute inset-0 p-6 flex items-center gap-4 bg-gradient-to-t from-black/60 to-transparent">
+          <img 
+            src="https://gelrtnknowueuzsrjphe.supabase.co/storage/v1/object/public/capas/capa-tempo-a-dois.jpg" 
+            className="w-20 h-28 object-cover rounded-lg shadow-xl border border-white/20"
+            alt="Capa"
+          />
+          <div className="text-white">
+            <h3 className="text-[10px] font-bold tracking-widest uppercase opacity-70">Destaque:</h3>
+            <h2 className="text-lg font-bold">Tempo a Dois</h2>
+            <p className="text-[10px] opacity-80 leading-tight">Fortalecendo sua união.</p>
+          </div>
+        </div>
       </div>
-      <InstallGuide />
+
+      {/* SEÇÃO BIBLIOTECA (BRANCA) */}
+      <div className="flex-1 w-full bg-white rounded-t-[48px] px-8 py-10 shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
+        <h2 className="text-3xl font-serif text-[#B28C3D] mb-10">Sua Biblioteca</h2>
+        
+        <div className="flex flex-col items-start w-36 group">
+          <div className="relative mb-4">
+            <img 
+              src="https://gelrtnknowueuzsrjphe.supabase.co/storage/v1/object/public/capas/capa-tempo-a-dois.jpg" 
+              className="w-36 h-52 object-cover rounded-2xl shadow-2xl group-active:scale-95 transition-transform"
+              alt="Tempo a Dois"
+            />
+          </div>
+          
+          {/* BOTÃO QUE ENVIA PARA O LEITOR */}
+          <Link href="/reader" className="w-full bg-[#2D0B5A] text-[#FFD700] py-3 rounded-2xl text-[10px] font-black uppercase tracking-tighter shadow-lg flex items-center justify-center gap-2">
+            Lêr Agora
+          </Link>
+        </div>
+      </div>
+
+      {/* MENU INFERIOR */}
+      <div className="w-full bg-gray-50/90 backdrop-blur-md border-t border-gray-200 py-4 px-10 flex justify-between items-center sticky bottom-0">
+        <div className="flex flex-col items-center gap-1 text-yellow-600">
+          <Home size={24} />
+          <span className="text-[10px] font-bold">Início</span>
+        </div>
+        <div className="flex flex-col items-center gap-1 text-gray-400 text-center opacity-30">
+          <Search size={24} />
+          <span className="text-[10px]">Buscar</span>
+        </div>
+      </div>
     </div>
   );
 }
