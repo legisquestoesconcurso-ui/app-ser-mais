@@ -285,8 +285,8 @@ export default function ReaderScreen() {
               </p>
             ))}
           </article>
-      )}
-
+    </main>
+)}
       {/* CONTROLES INFERIORES */}
       <div className={`fixed bottom-0 left-0 right-0 border-t flex items-center justify-center gap-16 py-4 px-6 transition-colors duration-500 backdrop-blur-lg z-40 ${isDarkMode ? 'bg-gray-950/90 border-gray-800' : 'bg-white/90 border-gray-100 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]'}`}>
         
