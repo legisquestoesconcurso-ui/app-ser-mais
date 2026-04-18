@@ -28,7 +28,6 @@ export default function ReaderScreen() {
         
         if (lista) setTodosCapitulos(lista);
 
-        // Abre o primeiro capítulo da sequência (ordem 0 ou 1)
         const { data: inicial } = await supabase
           .from('capitulos')
           .select('*')
@@ -46,10 +45,21 @@ export default function ReaderScreen() {
     loadData();
   }, []);
 
-  // Lógica de negrito: transforma **texto** em negrito roxo/branco
+  // Lógica de Negrito + Respiro entre parágrafos
   const formatarConteudo = (texto: string) => {
     if (!texto) return "";
-    return texto.replace(/\*\*(.*?)\*\*/g, '<strong class="font-black text-[#4C1D95] dark:text-white">$1</strong>');
+    
+    // 1. Transforma **texto** em negrito roxo/branco
+    let formatado = texto.replace(/\*\*(.*?)\*\*/g, '<strong class="font-black text-[#4C1D95] dark:text-white">$1</strong>');
+    
+    // 2. Transforma quebras de linha em parágrafos com margem inferior (o "respiro")
+    // Isso garante que cada bloco de texto tenha um espaço elegante abaixo dele
+    return formatado
+      .split('\n')
+      .map(paragrafo => paragrafo.trim())
+      .filter(paragrafo => paragrafo !== "")
+      .map(paragrafo => `<p class="mb-6">${paragrafo}</p>`)
+      .join('');
   };
 
   const mudarCapitulo = (novoCap: any) => {
@@ -104,7 +114,7 @@ export default function ReaderScreen() {
               </div>
             )}
 
-            {/* 4. VERSÍCULO BASE (Abaixo da frase e antes do conteúdo) */}
+            {/* 4. VERSÍCULO BASE */}
             {capitulo?.versiculo_base && (
               <div className="mb-10 pb-4 border-b border-[#B28C3D]/20">
                 <p className="font-serif italic text-[#B28C3D] opacity-90 text-md">
@@ -113,9 +123,9 @@ export default function ReaderScreen() {
               </div>
             )}
 
-            {/* 5. CONTEÚDO (Texto principal com suporte a negritos) */}
+            {/* 5. CONTEÚDO (Agora com espaçamento entre parágrafos) */}
             <div 
-              className="leading-relaxed font-serif space-y-6 text-justify"
+              className="leading-relaxed font-serif text-justify"
               style={{ fontSize: `${fontSize}px` }}
               dangerouslySetInnerHTML={{ __html: formatarConteudo(capitulo?.conteudo) }}
             />
