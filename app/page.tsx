@@ -5,20 +5,20 @@ import { User, Search, Home, Play } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LibraryScreen() {
-  // CONFIGURAÇÃO DOS LINKS EXATOS
+  // === LINKS REAIS E TESTADOS QUE VOCÊ ENVIOU ===
   const URL_LOGO = "/icon.png"; 
-  const URL_CAPA_CASAMENTO = "https://gelrtnknowueuzsrjphe.supabase.co/storage/v1/object/public/capas/capa-casamento.png.png";
-  const URL_CAPA_TEMPO = "https://gelrtnknowueuzsrjphe.supabase.co/storage/v1/object/public/capas/Design%20sem%20nome.png";
+  const URL_CAPA_TEMPO = "https://gelrtnknowueuzsrjphe.supabase.co/storage/v1/object/public/conteudo-ebook/Design%20sem%20nome.png";
+  const URL_CAPA_CASAMENTO = "https://gelrtnknowueuzsrjphe.supabase.co/storage/v1/object/public/conteudo-ebook/capa-casamento.png.png";
 
   return (
-    <div className="min-h-screen bg-[#2D0B5A] flex flex-col items-center">
-      {/* HEADER */}
+    <div className="min-h-screen bg-[#2D0B5A] flex flex-col items-center font-sans">
+      {/* HEADER SUPERIOR */}
       <div className="w-full max-w-md px-6 pt-12 pb-6 flex justify-between items-center z-10">
-        <div className="bg-white p-2 rounded-2xl shadow-lg flex items-center justify-center">
+        <div className="bg-white p-2 rounded-2xl shadow-lg flex items-center justify-center min-w-[50px]">
           <img 
             src={URL_LOGO} 
             alt="Logo" 
-            className="h-10 w-auto object-contain px-2" 
+            className="h-9 w-auto object-contain px-2" 
           />
         </div>
         <button className="bg-white/10 p-3 rounded-full text-yellow-500">
@@ -31,13 +31,13 @@ export default function LibraryScreen() {
         <img 
           src="https://images.unsplash.com/photo-1518191392211-1376d54d9c72?auto=format&fit=crop&q=80" 
           className="w-full h-60 object-cover brightness-50"
-          alt="Fundo"
+          alt="Background"
         />
-        <div className="absolute inset-0 p-6 flex items-center gap-5 bg-gradient-to-t from-black/80 via-black/40 to-transparent text-left">
+        <div className="absolute inset-0 p-6 flex items-center gap-5 bg-gradient-to-t from-black/90 via-black/40 to-transparent text-left">
           <img 
             src={URL_CAPA_CASAMENTO} 
             className="w-22 h-32 object-cover rounded-xl shadow-2xl border-2 border-white/30"
-            alt="Capa Casamento Forjado"
+            alt="Capa Casamento"
           />
           <div className="text-white">
             <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase opacity-70 text-yellow-400">Em Breve:</h3>
