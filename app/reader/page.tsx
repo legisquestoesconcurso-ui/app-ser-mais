@@ -21,11 +21,9 @@ export default function ReaderScreen() {
   useEffect(() => {
     async function loadData() {
       try {
-        // Busca a lista para o índice
         const { data: lista } = await supabase.from('capitulos').select('*').order('ordem', { ascending: true });
         if (lista) setTodosCapitulos(lista);
 
-        // Busca o capítulo 1 inicial
         const { data: inicial } = await supabase.from('capitulos').select('*').eq('ordem', 1).single();
         if (inicial) setCapitulo(inicial);
       } catch (err) {
@@ -57,13 +55,12 @@ export default function ReaderScreen() {
         </button>
       </div>
 
-      {/* ÁREA DE LEITURA */}
       <div className="max-w-md mx-auto px-8 py-10 pb-32">
         {loading ? (
           <div className="text-center py-20 italic opacity-50">Sincronizando...</div>
         ) : (
           <>
-            {/* IMAGEM DO CAPÍTULO (AJUSTADO PARA url_imagem) */}
+            {/* IMAGEM DO CAPÍTULO */}
             {capitulo?.url_imagem && (
               <div className="mb-8 rounded-2xl overflow-hidden shadow-xl">
                 <img 
@@ -79,7 +76,7 @@ export default function ReaderScreen() {
               {capitulo?.titulo_capitulo}
             </h2>
 
-            {/* FRASE DE DESTAQUE COM ASPAS DOURADAS */}
+            {/* 1. FRASE DE DESTAQUE (VERSÍCULO COM ASPAS) */}
             {capitulo?.frase_destaque && (
               <div className="flex gap-4 mb-10">
                 <Quote size={40} className="text-[#B28C3D] opacity-80 flex-shrink-0" fill="currentColor" />
@@ -95,11 +92,20 @@ export default function ReaderScreen() {
               style={{ fontSize: `${fontSize}px` }}
               dangerouslySetInnerHTML={{ __html: capitulo?.conteudo || "" }}
             />
+
+            {/* 2. VERSÍCULO BASE (RODAPÉ DO TEXTO) */}
+            {capitulo?.versiculo_base && (
+              <div className="mt-12 pt-8 border-t border-[#B28C3D]/30">
+                <p className="text-center font-serif italic text-[#B28C3D] opacity-90 text-lg">
+                  — {capitulo.versiculo_base}
+                </p>
+              </div>
+            )}
           </>
         )}
       </div>
 
-      {/* BARRA DE FERRAMENTAS INFERIOR */}
+      {/* FERRAMENTAS INFERIORES */}
       <div className={`fixed bottom-0 left-0 right-0 p-6 flex justify-around items-center border-t backdrop-blur-md z-40 ${isDarkMode ? 'bg-black/90 border-white/10' : 'bg-white/90 border-gray-100'}`}>
         <button onClick={() => setFontSize(prev => Math.max(14, prev - 2))} className="text-xl font-bold p-2">- A</button>
         <button 
