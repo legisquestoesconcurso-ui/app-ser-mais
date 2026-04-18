@@ -261,6 +261,7 @@ export default function ReaderScreen() {
           )}
 
           {/* Texto Principal */}
+          {/* Texto Principal com Negrito Automático */}
           <article 
             className={`space-y-6 font-sans transition-all duration-300 text-justify p-6 md:p-10 rounded-2xl shadow-sm ${isDarkMode ? 'bg-gray-900 border border-gray-800 text-gray-300' : 'bg-[#F9F7F2] border border-[#e8e4d9] text-gray-800'}`}
             style={{ 
@@ -268,12 +269,22 @@ export default function ReaderScreen() {
               lineHeight: '1.8'
             }}
           >
-            {/* Divide o texto por quebras de linha para renderizar parágrafos. Usa a coluna 'conteudo' */}
             {(currentChapter.conteudo || '').split('\n').map((paragraph: string, index: number) => (
-              <p key={index} className="text-justify">{paragraph}</p>
+              <p key={index} className="mb-4 text-justify">
+                {paragraph.split(/(\*\*.*?\*\*)/g).map((part, i) => {
+                  if (part.startsWith('**') && part.endsWith('**')) {
+                    // Remove as estrelas e aplica o negrito real
+                    return (
+                      <strong key={i} className={isDarkMode ? 'text-white font-bold' : 'text-purple-900 font-bold'}>
+                        {part.slice(2, -2)}
+                      </strong>
+                    );
+                  }
+                  return part;
+                })}
+              </p>
             ))}
           </article>
-        </main>
       )}
 
       {/* CONTROLES INFERIORES */}
