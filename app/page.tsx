@@ -1,28 +1,30 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { User, Search, Home, Play, CheckCircle } from 'lucide-react';
+import { User, Search, Home, Play } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LibraryScreen() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // === LINKS REAIS DO SEU SUPABASE E GITHUB ===
-  const URL_LOGO = "/icon.png"; // GitHub
+  // === LINKS REAIS E TESTADOS DO SEU SUPABASE E GITHUB ===
+  const URL_LOGO = "/icon.png"; 
   const URL_TEMPO_A_DOIS = "https://gelrtnknowueuzsrjphe.supabase.co/storage/v1/object/public/conteudo-ebook/Design%20sem%20nome.png";
   const URL_CASAMENTO_FORJADO = "https://gelrtnknowueuzsrjphe.supabase.co/storage/v1/object/public/conteudo-ebook/capa-casamento.png.png";
 
-  // DADOS DO CARROSSEL (Alternando as imagens de fundo e o texto)
+  // DADOS DO CARROSSEL (COM LINKS DE FUNDO ESTÁVEIS E FUNCIONAIS)
   const slides = [
     {
-      bg: "https://images.unsplash.com/photo-1518191392211-1376d54d9c72?auto=format&fit=crop&q=80",
+      // LINK DE FUNDO REPARADO: Uma montanha ao amanhecer
+      bg: "https://images.unsplash.com/photo-1580477667995-2b94f01c9516?q=80&w=600&auto=format&fit=crop",
       capa: URL_CASAMENTO_FORJADO,
       tag: "Em Breve:",
       titulo: "Casamento Forjado",
       desc: "Transformações que fortalecem a união.",
     },
     {
-      bg: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80",
+      // LINK DE FUNDO REPARADO: Uma floresta densa
+      bg: "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=600&auto=format&fit=crop",
       capa: URL_TEMPO_A_DOIS,
       tag: "Destaque do Mês:",
       titulo: "Tempo a Dois",
@@ -30,51 +32,55 @@ export default function LibraryScreen() {
     }
   ];
 
-  // Lógica para mover o carrossel automaticamente a cada 5 segundos
+  // Lógica para mover o carrossel automaticamente (a cada 5 segundos)
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000); // Mude o tempo aqui (5000 = 5 segundos)
+    }, 5000);
     return () => clearInterval(timer);
   }, [slides.length]);
 
   return (
     <div className="min-h-screen bg-[#2D0B5A] flex flex-col items-center font-sans overflow-x-hidden relative">
       
-      {/* HEADER SUPERIOR (BOTAO PERFIL + LOGO) */}
+      {/* HEADER SUPERIOR */}
       <div className="w-full max-w-md px-6 pt-12 pb-6 flex justify-between items-center z-20">
-        {/* LOGO (ICON.PNG) */}
         <div className="bg-white p-2 rounded-2xl shadow-lg flex items-center justify-center min-w-[50px] min-h-[50px]">
           <img 
             src={URL_LOGO} 
-            alt="Logo Ser+ App" 
+            alt="Logo Ser Mais App" 
             className="h-10 w-auto object-contain"
           />
         </div>
-        {/* BOTAO PERFIL */}
         <button className="bg-white/10 p-3 rounded-full text-yellow-500 hover:bg-white/20 transition-colors">
           <User size={24} />
         </button>
       </div>
 
       {/* ========================================================== */}
-      {/* 🎡 CARROSSEL QUE SE MOVE COM O FUNDO BONITO (RESTAURADO) */}
+      {/* 🎡 CARROSSEL COM FUNDO REPARADO (AGORA VAI APARECER!) */}
       {/* ========================================================== */}
-      <div className="w-[92%] max-w-md h-64 relative rounded-[32px] overflow-hidden shadow-2xl mb-8 border border-white/10 mt-[-20px] z-10 group">
+      <div className="w-[92%] max-w-md h-64 relative rounded-[32px] overflow-hidden shadow-2xl mb-8 border border-white/10 mt-[-20px] z-10">
         
         {slides.map((slide, index) => (
           <div
             key={index}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
           >
-            {/* IMAGEM DE FUNDO DO CARROSSEL */}
+            {/* IMAGEM DE FUNDO DO CARROSSEL (COM LINKS FUNCIONAIS) */}
             <img 
               src={slide.bg} 
-              className="w-full h-full object-cover brightness-[0.45]"
-              alt="Fundo bonitp"
+              className="w-full h-full object-cover brightness-[0.4]"
+              alt="Fundo bonito do carrossel"
+              onError={(e) => {
+                // Fallback simples caso a Unsplash falhe: fundo roxo escuro
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.parentElement!.style.backgroundColor = '#1a0636';
+              }}
             />
+            
             {/* CONTEÚDO DO SLIDE */}
-            <div className="absolute inset-0 p-6 flex items-center gap-5 text-left bg-gradient-to-t from-black/70 via-black/20 to-transparent">
+            <div className="absolute inset-0 p-6 flex items-center gap-5 text-left bg-gradient-to-t from-black/80 via-black/30 to-transparent">
               <img 
                 src={slide.capa} 
                 className="w-22 h-32 object-cover rounded-xl shadow-2xl border-2 border-white/20"
@@ -89,7 +95,7 @@ export default function LibraryScreen() {
           </div>
         ))}
 
-        {/* INDICADORES DO CARROSSEL (AQUELE TRACINHO AMARELO) */}
+        {/* INDICADORES DO CARROSSEL */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
           {slides.map((_, index) => (
             <div 
@@ -101,15 +107,12 @@ export default function LibraryScreen() {
       </div>
 
       {/* ========================================================== */}
-      {/* 📚 SEÇÃO BIBLIOTECA (VISUAL PREMIUM DO STUDIO RESTAURADO) */}
+      {/* 📚 SEÇÃO BIBLIOTECA (VISUAL PREMIUM DO STUDIO) */}
       {/* ========================================================== */}
       <div className="flex-1 w-full bg-white rounded-t-[48px] px-8 py-10 shadow-[0_-15px_60px_rgba(0,0,0,0.5)] relative z-20 mt-[-20px]">
-        {/* TÍTULO DOURADO CONFORME STUDIO */}
         <h2 className="text-3xl font-serif font-black text-[#B28C3D] mb-12 text-left tracking-tighter">Sua Biblioteca</h2>
         
-        {/* CARD DO LIVRO TEMPO A DOIS */}
         <div className="flex flex-col items-start w-40 group">
-          {/* CAPA COM SOMBRA SUAVE (CONFORME STUDIO) */}
           <div className="relative mb-6 shadow-[0_15px_45px_rgba(0,0,0,0.18)] rounded-2xl overflow-hidden active:scale-95 transition-transform group-hover:shadow-[0_20px_55px_rgba(0,0,0,0.25)]">
             <img 
               src={URL_TEMPO_A_DOIS} 
@@ -118,7 +121,6 @@ export default function LibraryScreen() {
             />
           </div>
           
-          {/* BOTÃO "LER AGORA" COM ÍCONE (CONFORME STUDIO) */}
           <Link href="/reader" className="w-full bg-[#2D0B5A] text-[#FFD700] py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center justify-center gap-2 hover:bg-[#3d107a] active:bg-[#1a0636] transition-colors">
             <Play size={14} fill="currentColor" />
             Ler Agora
