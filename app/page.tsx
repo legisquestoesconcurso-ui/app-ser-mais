@@ -5,23 +5,25 @@ import { User, Search, Home, Play } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LibraryScreen() {
-  // === CONFIGURAÇÃO DE IMAGENS REAIS (SEM ESPAÇOS NO NOME) ===
-  const URL_LOGO = "https://gelrtnknowueuzsrjphe.supabase.co/storage/v1/object/public/capas/logo-ser-mais.png";
+  // === CONFIGURAÇÃO DE IMAGENS REAIS (NOME DA LOGO AJUSTADO PARA ICON) ===
+  const URL_LOGO = "https://gelrtnknowueuzsrjphe.supabase.co/storage/v1/object/public/capas/icon.png";
   const URL_CAPA_LIVRO = "https://gelrtnknowueuzsrjphe.supabase.co/storage/v1/object/public/capas/capa-tempo-a-dois.jpg";
   const URL_BG_BANNER = "https://images.unsplash.com/photo-1518191392211-1376d54d9c72?q=80&w=600";
 
   return (
-    <div className="min-h-screen bg-[#2D0B5A] flex flex-col items-center">
+    <div className="min-h-screen bg-[#2D0B5A] flex flex-col items-center font-sans">
       {/* HEADER SUPERIOR */}
       <div className="w-full max-w-md px-6 pt-12 pb-6 flex justify-between items-center z-10">
-        <div className="bg-white p-2 rounded-2xl shadow-lg">
+        <div className="bg-white p-2 rounded-2xl shadow-lg flex items-center justify-center min-w-[50px] min-h-[50px]">
           <img 
             src={URL_LOGO} 
-            alt="Logo" 
-            className="h-9 w-auto"
+            alt="Logo Icon" 
+            className="h-10 w-auto object-contain"
             onError={(e) => {
+              // Se o link falhar, ele mostra o texto S+ para não ficar vazio
               e.currentTarget.style.display = 'none';
-              if(e.currentTarget.nextSibling) (e.currentTarget.nextSibling as HTMLElement).style.display = 'block';
+              const fallback = e.currentTarget.nextSibling as HTMLElement;
+              if(fallback) fallback.style.display = 'block';
             }}
           />
           <span className="hidden text-purple-900 font-black text-xl px-2">S+</span>
@@ -38,16 +40,16 @@ export default function LibraryScreen() {
           className="w-full h-60 object-cover brightness-50"
           alt="Background"
         />
-        <div className="absolute inset-0 p-6 flex items-center gap-5 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+        <div className="absolute inset-0 p-6 flex items-center gap-5 bg-gradient-to-t from-black/80 via-black/40 to-transparent text-left">
           <img 
             src={URL_CAPA_LIVRO} 
             className="w-22 h-32 object-cover rounded-xl shadow-2xl border-2 border-white/30"
             alt="Capa Destaque"
           />
-          <div className="text-white text-left">
+          <div className="text-white">
             <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase opacity-70 text-yellow-400">Destaque:</h3>
             <h2 className="text-xl font-black leading-tight mt-1">Tempo a Dois</h2>
-            <p className="text-[11px] opacity-90 leading-snug mt-1">Fortalecendo sua união.</p>
+            <p className="text-[11px] opacity-90 leading-snug mt-1">Fortalecendo sua união a cada capítulo.</p>
           </div>
         </div>
       </div>
@@ -61,7 +63,7 @@ export default function LibraryScreen() {
             <img 
               src={URL_CAPA_LIVRO} 
               className="w-40 h-56 object-cover rounded-2xl"
-              alt="Capa Livro"
+              alt="Capa Ebook"
             />
           </div>
           
@@ -76,11 +78,11 @@ export default function LibraryScreen() {
       <div className="w-full bg-white border-t border-gray-100 py-4 px-12 flex justify-between items-center sticky bottom-0 z-50">
         <div className="flex flex-col items-center gap-1 text-yellow-600">
           <Home size={24} />
-          <span className="text-[10px] font-bold uppercase">Início</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest">Início</span>
         </div>
         <div className="flex flex-col items-center gap-1 text-gray-400 opacity-30">
           <Search size={24} />
-          <span className="text-[10px] font-medium uppercase">Buscar</span>
+          <span className="text-[10px] font-medium uppercase tracking-widest">Buscar</span>
         </div>
       </div>
     </div>
