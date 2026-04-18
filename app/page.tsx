@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';
 // CONFIGURAÇÃO SUPABASE (Real)
 // ==========================================
 const SUPABASE_URL = 'https://gelrtnknowueuzsrjphe.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_3kx415U4v2y8vqbsPNTJXg_pVcoIpGS';
+const SUPABASE_ANON_KEY = 'sb_publishable_3kx4l5U4v2y8vqbsPNTJXg_pVcoIpGS';
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function ReaderScreen() {
