@@ -6,11 +6,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 
+export const dynamic = 'force-dynamic';
+
 // ==========================================
 // CONFIGURAÇÃO SUPABASE (Real)
 // ==========================================
 const SUPABASE_URL = 'https://gelrtnknowueuzsrjphe.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_3kx4l5U4v2y8vqbsPNTJXg_pVcoIpGS';
+const SUPABASE_ANON_KEY = 'sb_publishable_3kx415U4v2y8vqbsPNTJXg_pVcoIpGS';
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function ReaderScreen() {
@@ -25,40 +27,32 @@ export default function ReaderScreen() {
   const [chaptersList, setChaptersList] = useState<any[]>([]);
   const [currentChapter, setCurrentChapter] = useState<any>(null);
 
-  // --- SIMULAÇÃO DO FETCH DO SUPABASE ---
+  // --- FETCH DO SUPABASE Atualizado ---
   useEffect(() => {
     const fetchBookData = async () => {
       setLoading(true);
       
       try {
-        // 1. LÓGICA DE ACESSO (Simulando tabela user_access)
-        // Mude para 'false' para testar a tela de bloqueio
-        const userHasPaid = true; 
-
-        if (!userHasPaid) {
-          setHasAccess(false);
-          setLoading(false);
-          return;
-        }
-
+        // 1. FORÇAR ACESSO: Garantindo que o conteúdo apareça para os testes
         setHasAccess(true);
 
-        // 2. BUSCA DE CAPÍTULOS (Real no Supabase)
-        // Busca completa sem limites, ordenada pela coluna 'ordem'
+        // 2. BUSCA DE CAPÍTULOS Diretamente no Supabase
         const { data: fetchedChapters, error } = await supabase
           .from('capitulos')
-          .select('*')
+          .select('id, titulo_capitulo, conteudo, ordem, url_imagem, frase_destaque')
           .order('ordem', { ascending: true });
 
         if (error) throw error;
 
         if (fetchedChapters && fetchedChapters.length > 0) {
           setChaptersList(fetchedChapters);
-          // Define o primeiro capítulo como ativo por padrão
           setCurrentChapter(fetchedChapters[0]);
+        } else {
+          console.warn("Aviso: A busca não retornou nenhum capítulo.");
         }
-      } catch (error) {
-        console.error("Erro ao buscar capítulos:", error);
+      } catch (error: any) {
+        console.error("Erro detalhado ao buscar capítulos:", JSON.stringify(error, null, 2), error);
+        alert(`Falha na conexão com Supabase: ${error?.message || 'Erro desconhecido'}. (Verifique o console para mais detalhes)`);
       } finally {
         setLoading(false);
       }
