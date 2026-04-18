@@ -15,6 +15,49 @@ const SUPABASE_URL = 'https://gelrtnknowueuzsrjphe.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_3kx4l5U4v2y8vqbsPNTJXg_pVcoIpGS';
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// ==========================================
+// COMPONENTE: GUIA DE INSTALAÇÃO PWA
+// ==========================================
+function InstallGuide() {
+  const [isMounted, setIsMounted] = useState(false);
+  const [showInstall, setShowInstall] = useState(false);
+
+  useEffect(() => {
+    let timeoutId = setTimeout(() => {
+      setIsMounted(true);
+      if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
+        if (isMobile && !isStandalone) {
+          setShowInstall(true);
+        }
+      }
+    }, 0);
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  if (!isMounted || !showInstall) return null;
+
+  return (
+    <div className="fixed bottom-24 left-4 right-4 bg-purple-700 text-white p-4 rounded-xl shadow-2xl z-50 animate-bounce text-center border border-purple-500/50">
+      <p className="text-xs md:text-sm font-medium leading-snug tracking-wide">
+        Para ler sem distrações: Toque em Compartilhar (ou nos 3 pontinhos) e escolha &apos;Adicionar à Tela de Início&apos;
+      </p>
+    </div>
+  );
+}
+
+// Helper para converter **texto** em negrito
+const renderWithBold = (text: string) => {
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={index} className="font-bold">{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+};
+
 export default function ReaderScreen() {
   // --- ESTADOS DA INTERFACE ---
   const [fontSize, setFontSize] = useState(18);
@@ -261,7 +304,6 @@ export default function ReaderScreen() {
           )}
 
           {/* Texto Principal */}
-          {/* Texto Principal com Negrito Automático */}
           <article 
             className={`space-y-6 font-sans transition-all duration-300 text-justify p-6 md:p-10 rounded-2xl shadow-sm ${isDarkMode ? 'bg-gray-900 border border-gray-800 text-gray-300' : 'bg-[#F9F7F2] border border-[#e8e4d9] text-gray-800'}`}
             style={{ 
@@ -269,24 +311,14 @@ export default function ReaderScreen() {
               lineHeight: '1.8'
             }}
           >
+            {/* Divide o texto por quebras de linha para renderizar parágrafos. Usa a coluna 'conteudo' */}
             {(currentChapter.conteudo || '').split('\n').map((paragraph: string, index: number) => (
-              <p key={index} className="mb-4 text-justify">
-                {paragraph.split(/(\*\*.*?\*\*)/g).map((part, i) => {
-                  if (part.startsWith('**') && part.endsWith('**')) {
-                    // Remove as estrelas e aplica o negrito real
-                    return (
-                      <strong key={i} className={isDarkMode ? 'text-white font-bold' : 'text-purple-900 font-bold'}>
-                        {part.slice(2, -2)}
-                      </strong>
-                    );
-                  }
-                  return part;
-                })}
-              </p>
+              <p key={index} className="text-justify">{renderWithBold(paragraph)}</p>
             ))}
           </article>
-    </main>
-)}
+        </main>
+      )}
+
       {/* CONTROLES INFERIORES */}
       <div className={`fixed bottom-0 left-0 right-0 border-t flex items-center justify-center gap-16 py-4 px-6 transition-colors duration-500 backdrop-blur-lg z-40 ${isDarkMode ? 'bg-gray-950/90 border-gray-800' : 'bg-white/90 border-gray-100 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]'}`}>
         
@@ -303,6 +335,9 @@ export default function ReaderScreen() {
         </button>
 
       </div>
+      
+      {/* GUIA DE INSTALAÇÃO PWA */}
+      <InstallGuide />
     </div>
   );
 }
