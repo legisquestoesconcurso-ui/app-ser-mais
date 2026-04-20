@@ -4,8 +4,8 @@
   "description": "Nutrindo o Relacionamento, Criando Memórias",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FDF9F3",
-  "theme_color": "#4C1D95",
+  "background_color": "#2D0B5A",
+  "theme_color": "#2D0B5A",
   "icons": [
     {
       "src": "/icon-192.png",
