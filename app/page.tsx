@@ -34,16 +34,13 @@ export default function LibraryScreen() {
   ];
 
   useEffect(() => {
-    // 1. Logica do Carrossel
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
 
-    // 2. Logica de Instalação (PWA)
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      // Opcional: define um delay para o banner aparecer após o carregamento
       setTimeout(() => setShowInstallBanner(true), 1500);
     });
 
@@ -63,7 +60,7 @@ export default function LibraryScreen() {
   return (
     <div className="min-h-screen bg-[#2D0B5A] flex flex-col items-center font-sans overflow-x-hidden relative">
       
-      {/* BANNER DE ORIENTAÇÃO PARA INSTALAÇÃO (MODERNO E BONITO) */}
+      {/* BANNER DE ORIENTAÇÃO PARA INSTALAÇÃO */}
       {showInstallBanner && (
         <div className="fixed top-6 left-4 right-4 z-[100] bg-[#4C1D95] text-white p-4 rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-yellow-500/40 flex items-center justify-between animate-in fade-in slide-in-from-top-4 duration-700">
           <div className="flex items-center gap-4">
@@ -76,16 +73,10 @@ export default function LibraryScreen() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <button 
-              onClick={() => setShowInstallBanner(false)}
-              className="p-1 opacity-40 hover:opacity-100 transition-opacity"
-            >
+            <button onClick={() => setShowInstallBanner(false)} className="p-1 opacity-40 hover:opacity-100 transition-opacity">
               <X size={18} />
             </button>
-            <button 
-              onClick={handleInstallClick}
-              className="bg-yellow-500 text-[#2D0B5A] text-[11px] font-black px-5 py-2.5 rounded-full shadow-lg active:scale-90 transition-transform flex items-center gap-2"
-            >
+            <button onClick={handleInstallClick} className="bg-yellow-500 text-[#2D0B5A] text-[11px] font-black px-5 py-2.5 rounded-full shadow-lg active:scale-90 transition-transform flex items-center gap-2">
               <Download size={14} />
               BAIXAR
             </button>
@@ -93,12 +84,16 @@ export default function LibraryScreen() {
         </div>
       )}
 
-      {/* HEADER PREMIUM */}
+      {/* HEADER PREMIUM - SUGESTÃO 1 APLICADA */}
       <div className="w-full max-w-md px-6 pt-12 pb-6 flex justify-between items-center z-20">
-        <div className="bg-white p-2 rounded-2xl shadow-xl flex items-center justify-center min-w-[55px] min-h-[55px]">
-          <img src={URL_LOGO} alt="Logo Ser+" className="h-10 w-auto object-contain px-1" />
+        <div className="flex items-center justify-center min-w-[65px] min-h-[65px]">
+          <img 
+            src={URL_LOGO} 
+            alt="Logo Casamento Duradouro" 
+            className="h-16 w-auto object-contain drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)]" 
+          />
         </div>
-        <button className="bg-white/10 p-3 rounded-full text-yellow-500 shadow-lg border border-white/5">
+        <button className="bg-white/10 p-4 rounded-full text-yellow-500 shadow-lg border border-white/5 active:scale-90 transition-transform">
           <User size={24} />
         </button>
       </div>
@@ -106,10 +101,7 @@ export default function LibraryScreen() {
       {/* CARROSSEL DINÂMICO */}
       <div className="w-[92%] max-w-md h-64 relative rounded-[32px] overflow-hidden shadow-2xl mb-8 border border-white/10 mt-[-10px] z-10">
         {slides.map((slide, index) => (
-          <div 
-            key={index} 
-            className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
-          >
+          <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}>
             <img src={slide.bg} className="w-full h-full object-cover brightness-[0.4]" alt="Fundo" />
             <div className="absolute inset-0 p-6 flex items-center gap-5 text-left bg-gradient-to-t from-black/90 via-transparent to-transparent">
               <img src={slide.capa} className="w-24 h-34 object-cover rounded-xl shadow-2xl border border-white/20" alt="Capa" />
@@ -131,12 +123,10 @@ export default function LibraryScreen() {
       {/* SEÇÃO BIBLIOTECA */}
       <div className="flex-1 w-full bg-white rounded-t-[50px] px-8 py-12 shadow-[0_-20px_60px_rgba(0,0,0,0.4)] relative z-20 mt-[-20px]">
         <h2 className="text-4xl font-serif font-black text-[#B28C3D] mb-12 tracking-tighter">Sua Biblioteca</h2>
-        
         <div className="flex flex-col items-start w-44 group">
           <div className="relative mb-6 shadow-2xl rounded-[24px] overflow-hidden active:scale-95 transition-transform duration-300">
             <img src={URL_TEMPO_A_DOIS} className="w-44 h-60 object-cover" alt="Livro Tempo a Dois" />
           </div>
-          
           <Link href="/reader" className="w-full bg-[#2D0B5A] text-[#FFD700] py-4 rounded-2xl text-[11px] font-black uppercase tracking-[0.15em] shadow-xl flex items-center justify-center gap-2 hover:bg-[#3d107a] transition-colors">
             <Play size={14} fill="currentColor" />
             LER AGORA
