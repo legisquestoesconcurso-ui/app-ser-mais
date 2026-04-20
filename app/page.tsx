@@ -71,7 +71,7 @@ export default function LibraryScreen() {
               <img src={URL_LOGO} alt="App Icon" className="w-8 h-8 object-contain" />
             </div>
             <div>
-              <p className="text-[14px] font-black tracking-tight text-white">Instalar Tempo a Dois</p>
+              <p className="text-[14px] font-black tracking-tight text-white">Instalar Casamento Duradouro</p>
               <p className="text-[11px] text-yellow-500/90 font-medium">Leia offline e com melhor experiência</p>
             </div>
           </div>
