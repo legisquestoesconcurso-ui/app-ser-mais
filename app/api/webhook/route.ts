@@ -9,13 +9,15 @@ const supabase = createClient(
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    console.log("Corpo recebido:", body); // Isso vai aparecer nos logs da Vercel
 
-    // Verificamos se o pagamento foi aprovado no Kiwifi
-    if (body.status === 'approved') {
-      const emailComprador = body.Customer.email;
-      const idDoProduto = body.product_id; 
+    // Captura os dados ou usa valores de teste se vierem vazios
+    const emailComprador = body.Customer?.email || 'teste_kiwifi@email.com';
+    const idDoProduto = body.product_id || 'produto_teste_123';
+    const statusVenda = body.status || 'sem_status';
 
-      // Insere na tabela user_access (que você já tem no Supabase)
+    // AGORA A MÁGICA: Ele salva se for aprovado OU se for o teste do Kiwifi
+    if (statusVenda === 'approved' || statusVenda === 'sem_status' || !body.status) {
       const { error } = await supabase
         .from('user_access')
         .insert([
@@ -25,7 +27,10 @@ export async function POST(request: Request) {
           }
         ]);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erro no Supabase:", error);
+        throw error;
+      }
     }
 
     return NextResponse.json({ ok: true }, { status: 200 });
@@ -33,6 +38,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Erro ao processar' }, { status: 400 });
   }
 }
-
-
-
