@@ -9,32 +9,37 @@ const supabase = createClient(
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    console.log("Corpo recebido:", body); // Isso vai aparecer nos logs da Vercel
+    
+    // Verificamos o status real enviado pelo Kiwifi
+    const statusVenda = body.status;
+    const emailComprador = body.Customer?.email;
+    const idDoProduto = body.product_id;
 
-    // Captura os dados ou usa valores de teste se vierem vazios
-    const emailComprador = body.Customer?.email || 'teste_kiwifi@email.com';
-    const idDoProduto = body.product_id || 'produto_teste_123';
-    const statusVenda = body.status || 'sem_status';
-
-    // AGORA A MÁGICA: Ele salva se for aprovado OU se for o teste do Kiwifi
-    if (statusVenda === 'approved' || statusVenda === 'sem_status' || !body.status) {
+    // FILTRO PROFISSIONAL: 
+    // Só entra no banco de dados se o status for exatamente 'approved'
+    // E se houver um e-mail válido.
+    if (statusVenda === 'approved' && emailComprador) {
       const { error } = await supabase
         .from('user_access')
         .insert([
           { 
             user_id: emailComprador, 
-            book_id: idDoProduto.toString() 
+            book_id: idDoProduto ? idDoProduto.toString() : 'produto_principal' 
           }
         ]);
 
       if (error) {
-        console.error("Erro no Supabase:", error);
+        console.error("Erro ao inserir no Supabase:", error);
         throw error;
       }
     }
 
+    // Retornamos 200 (OK) para o Kiwifi entender que o sinal chegou, 
+    // mesmo que o status não seja 'approved' (evita que o Kiwifi fique tentando reenviar)
     return NextResponse.json({ ok: true }, { status: 200 });
+    
   } catch (err) {
+    console.error("Erro interno no Webhook:", err);
     return NextResponse.json({ error: 'Erro ao processar' }, { status: 400 });
   }
 }
