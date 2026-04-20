@@ -2,7 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css'; // Global styles
 
 export const metadata: Metadata = {
-  title: 'SER+',
+  title: 'Casamento Duradouro',
   description: 'Aplicativo de leitura e desenvolvimento pessoal',
   icons: {
     icon: '/icon.png',
