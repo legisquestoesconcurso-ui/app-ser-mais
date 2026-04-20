@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { User, Search, Home, Play, Download, X } from 'lucide-react';
+import { User, Play, Download, X } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LibraryScreen() {
@@ -58,7 +58,7 @@ export default function LibraryScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-[#2D0B5A] flex flex-col items-center font-sans overflow-x-hidden relative">
+    <div className="min-h-screen bg-[#2D0B5A] flex flex-col items-center font-sans overflow-x-hidden relative pb-10">
       
       {/* BANNER DE ORIENTAÇÃO PARA INSTALAÇÃO */}
       {showInstallBanner && (
@@ -84,7 +84,7 @@ export default function LibraryScreen() {
         </div>
       )}
 
-      {/* HEADER PREMIUM - SUGESTÃO 1 APLICADA */}
+      {/* HEADER PREMIUM */}
       <div className="w-full max-w-md px-6 pt-12 pb-6 flex justify-between items-center z-20">
         <div className="flex items-center justify-center min-w-[65px] min-h-[65px]">
           <img 
@@ -120,12 +120,16 @@ export default function LibraryScreen() {
         </div>
       </div>
 
-      {/* SEÇÃO BIBLIOTECA */}
+      {/* SEÇÃO BIBLIOTECA - AJUSTADA PARA CAPA INTEIRA */}
       <div className="flex-1 w-full bg-white rounded-t-[50px] px-8 py-12 shadow-[0_-20px_60px_rgba(0,0,0,0.4)] relative z-20 mt-[-20px]">
         <h2 className="text-4xl font-serif font-black text-[#B28C3D] mb-12 tracking-tighter">Sua Biblioteca</h2>
         <div className="flex flex-col items-start w-44 group">
-          <div className="relative mb-6 shadow-2xl rounded-[24px] overflow-hidden active:scale-95 transition-transform duration-300">
-            <img src={URL_TEMPO_A_DOIS} className="w-44 h-60 object-cover" alt="Livro Tempo a Dois" />
+          <div className="relative mb-6 shadow-2xl rounded-[24px] overflow-hidden active:scale-95 transition-transform duration-300 bg-gray-50 border border-gray-100">
+            <img 
+              src={URL_TEMPO_A_DOIS} 
+              className="w-44 h-64 object-contain" // Garante que a capa apareça inteira
+              alt="Livro Tempo a Dois" 
+            />
           </div>
           <Link href="/reader" className="w-full bg-[#2D0B5A] text-[#FFD700] py-4 rounded-2xl text-[11px] font-black uppercase tracking-[0.15em] shadow-xl flex items-center justify-center gap-2 hover:bg-[#3d107a] transition-colors">
             <Play size={14} fill="currentColor" />
@@ -134,17 +138,7 @@ export default function LibraryScreen() {
         </div>
       </div>
 
-      {/* MENU INFERIOR */}
-      <div className="w-full bg-white border-t border-gray-100 py-5 px-14 flex justify-between items-center sticky bottom-0 z-50">
-        <div className="flex flex-col items-center gap-1 text-yellow-600">
-          <Home size={28} />
-          <span className="text-[10px] font-bold uppercase tracking-widest">Início</span>
-        </div>
-        <div className="flex flex-col items-center gap-1 text-gray-300 opacity-40">
-          <Search size={28} />
-          <span className="text-[10px] font-bold uppercase tracking-widest">Buscar</span>
-        </div>
-      </div>
+      {/* MENU INFERIOR REMOVIDO PARA UM VISUAL MAIS LIMPO */}
     </div>
   );
 }
